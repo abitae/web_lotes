@@ -222,5 +222,18 @@ export const DEFAULT_HOME_ALERT: HomeAlertModal = {
 };
 
 export function getContactFormBySlug(forms: ContactFormConfig[], slug: string): ContactFormConfig {
-  return forms.find((f) => f.slug === slug) ?? DEFAULT_CONTACT_FORMS.find((f) => f.slug === slug)!;
+  const fallback = DEFAULT_CONTACT_FORMS.find((f) => f.slug === slug) ?? DEFAULT_CONTACT_FORMS[0];
+  const form = forms.find((f) => f.slug === slug) ?? fallback;
+
+  return {
+    ...fallback,
+    ...form,
+    sectionEyebrow: form.sectionEyebrow?.trim() || fallback.sectionEyebrow,
+    sectionHeading: form.sectionHeading?.trim() || fallback.sectionHeading,
+    sectionDescription: form.sectionDescription?.trim() || fallback.sectionDescription,
+    bullets: form.bullets?.length ? form.bullets : fallback.bullets,
+    pageEyebrow: form.pageEyebrow?.trim() || fallback.pageEyebrow,
+    pageHeading: form.pageHeading?.trim() || fallback.pageHeading,
+    pageDescription: form.pageDescription?.trim() || fallback.pageDescription,
+  };
 }

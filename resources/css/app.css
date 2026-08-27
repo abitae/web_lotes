@@ -333,6 +333,25 @@
     inset 0 1px 0 rgb(255 255 255 / 0.95);
 }
 
+.home-contact-form-card,
+.home-contact-form-card .text-emerald-950,
+.home-contact-form-card .text-stone-600,
+.home-contact-form-card .text-stone-900,
+.home-contact-form-card .text-emerald-900,
+.home-contact-form-card .text-emerald-800\/90 {
+  color: inherit;
+}
+
+.home-contact-form-card h3,
+.home-contact-form-card h4 {
+  color: #064e3b !important;
+}
+
+.home-contact-form-card > div > p,
+.home-contact-form-card .text-stone-600 {
+  color: #57534e !important;
+}
+
 .home-contact-form-card::before {
   content: "";
   position: absolute;
@@ -403,6 +422,76 @@
   background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
   box-shadow: 0 6px 20px rgb(4 120 87 / 0.55);
   transform: translateY(-1px);
+}
+
+.home-contact-info-card {
+  background: rgb(255 255 255 / 0.08);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08);
+}
+
+.home-contact-info-card .info-value {
+  color: #ecfdf5;
+}
+
+.home-contact-info-card .info-label {
+  color: #a7f3d0;
+}
+
+/* Footer — contraste fijo (evita overrides globales light/dark) */
+#public-footer {
+  background-color: #09090b !important;
+  color: #d4d4d8 !important;
+  border-top: 1px solid #3f3f46;
+}
+
+#public-footer .footer-legal-bar {
+  background-color: #18181b !important;
+  border-bottom: 1px solid #3f3f46;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+#public-footer .footer-legal-text {
+  color: #f4f4f5 !important;
+}
+
+#public-footer .footer-ruc {
+  color: #a1a1aa !important;
+}
+
+#public-footer .footer-heading {
+  color: #fafafa !important;
+}
+
+#public-footer .footer-desc {
+  color: #a1a1aa !important;
+}
+
+#public-footer .footer-link {
+  color: #d4d4d8 !important;
+  transition: color 0.15s ease;
+}
+
+#public-footer .footer-link:hover {
+  color: #ffffff !important;
+}
+
+#public-footer .footer-brand-name {
+  color: #fafafa !important;
+}
+
+#public-footer .footer-brand-tagline {
+  color: #34d399 !important;
+}
+
+#public-footer .footer-bottom {
+  border-top: 1px solid #3f3f46;
+}
+
+#public-footer .footer-copyright {
+  color: #a1a1aa !important;
 }
 
 /* Public pages: legible body copy on light backgrounds */

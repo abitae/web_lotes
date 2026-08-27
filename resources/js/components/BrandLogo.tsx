@@ -69,7 +69,7 @@ export function BrandLogo({ settings, variant = "navbar", className = "" }: Bran
               className={`font-sans font-extrabold tracking-wide uppercase truncate ${
                 variant === "navbar"
                   ? "text-sm text-[var(--text-p)]"
-                  : "text-sm text-[#fafafa]"
+                  : "footer-brand-name text-sm"
               }`}
             >
               {siteName}
@@ -80,7 +80,7 @@ export function BrandLogo({ settings, variant = "navbar", className = "" }: Bran
               className={`font-mono tracking-widest uppercase font-semibold truncate ${
                 variant === "navbar"
                   ? "text-[9px] text-[var(--accent-text)] mt-0.5"
-                  : "text-[8px] text-[var(--accent)] mt-0.5"
+                  : "footer-brand-tagline text-[8px] mt-0.5"
               }`}
             >
               {tagline}

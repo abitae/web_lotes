@@ -19,15 +19,21 @@ import {
   ArrowBigRight,
   Sparkles,
   PhoneCall,
-  UserCheck
+  UserCheck,
+  ShieldCheck,
+  Clock3,
+  Mail,
+  Phone,
+  MapPin,
 } from "lucide-react";
 
 export const Home: React.FC = () => {
-  const { banners, projects, testimonials, addInquiry, guarantees, contactForms, homePage } = useApp();
+  const { banners, projects, testimonials, addInquiry, guarantees, contactForms, homePage, channels } = useApp();
   const guaranteeData = guarantees ?? DEFAULT_GUARANTEES;
   const homeContent = homePage ?? DEFAULT_HOME_PAGE;
   const contactForm = getContactFormBySlug(contactForms, "contact_consulta");
   const activeGuaranteeItems = guaranteeData.items.filter((i) => i.isActive);
+  const highlightChannels = channels.filter((c) => c.isActive).slice(0, 3);
 
   const catalogCarouselProjects = projects;
 
@@ -418,20 +424,23 @@ export const Home: React.FC = () => {
         <div className="home-contact-section__shine" aria-hidden />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
             {/* Informative column */}
-            <div className="space-y-6 text-white">
-              <span className="inline-flex items-center gap-2 font-mono text-xs text-amber-300 tracking-wider font-bold uppercase px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/25">
-                {contactForm.sectionEyebrow}
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-sans font-extrabold tracking-tight leading-tight text-white drop-shadow-sm">
+            <div className="lg:col-span-5 flex flex-col justify-center space-y-7 text-white">
+              {contactForm.sectionEyebrow && (
+                <span className="inline-flex self-start items-center gap-2 font-mono text-xs text-amber-200 tracking-wider font-bold uppercase px-3 py-1.5 rounded-full bg-amber-400/20 border border-amber-200/30">
+                  <Sparkles className="w-3.5 h-3.5" aria-hidden />
+                  {contactForm.sectionEyebrow}
+                </span>
+              )}
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.6rem] font-sans font-extrabold tracking-tight leading-tight text-white drop-shadow-sm">
                 {contactForm.sectionHeading}
               </h2>
-              <p className="text-emerald-50/95 text-sm sm:text-base font-normal leading-relaxed max-w-lg">
+              <p className="text-emerald-50 text-sm sm:text-base font-normal leading-relaxed max-w-lg">
                 {contactForm.sectionDescription}
               </p>
 
-              <div className="space-y-4 pt-6 border-t border-emerald-400/30">
+              <div className="space-y-3.5 pt-2">
                 {(contactForm.bullets ?? []).map((bullet, idx) => (
                   <div key={idx} className="flex items-start gap-3 text-sm sm:text-base text-white">
                     <CheckCircle className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" aria-hidden />
@@ -439,10 +448,57 @@ export const Home: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="home-contact-info-card rounded-xl p-4 flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-emerald-300 shrink-0 mt-0.5" aria-hidden />
+                  <div>
+                    <p className="info-label text-[10px] font-mono uppercase tracking-wider font-bold mb-0.5">Seguridad</p>
+                    <p className="info-value text-sm font-semibold leading-snug">Lotes con título SUNARP</p>
+                  </div>
+                </div>
+                <div className="home-contact-info-card rounded-xl p-4 flex items-start gap-3">
+                  <Clock3 className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" aria-hidden />
+                  <div>
+                    <p className="info-label text-[10px] font-mono uppercase tracking-wider font-bold mb-0.5">Respuesta</p>
+                    <p className="info-value text-sm font-semibold leading-snug">Asesoría el mismo día</p>
+                  </div>
+                </div>
+              </div>
+
+              {highlightChannels.length > 0 && (
+                <div className="home-contact-info-card rounded-xl p-4 space-y-3">
+                  <p className="info-label text-[10px] font-mono uppercase tracking-wider font-bold">Canales directos</p>
+                  <ul className="space-y-2.5">
+                    {highlightChannels.map((ch) => {
+                      const Icon = ch.channelType === "email" ? Mail : ch.channelType === "address" ? MapPin : Phone;
+                      const href =
+                        ch.channelType === "phone"
+                          ? `tel:${ch.value.replace(/\s/g, "")}`
+                          : ch.channelType === "email"
+                            ? `mailto:${ch.value}`
+                            : undefined;
+                      return (
+                        <li key={ch.id} className="flex items-center gap-2.5 text-sm">
+                          <Icon className="w-4 h-4 text-amber-300 shrink-0" aria-hidden />
+                          {href ? (
+                            <a href={href} className="info-value hover:underline font-medium">
+                              {ch.value}
+                            </a>
+                          ) : (
+                            <span className="info-value font-medium">{ch.value}</span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Form card column */}
-            <div className="home-contact-form-card p-7 sm:p-10 rounded-2xl text-stone-900 overflow-hidden">
+            <div className="lg:col-span-7 flex items-center">
+            <div className="home-contact-form-card w-full p-7 sm:p-10 rounded-2xl text-stone-900 overflow-hidden">
               <div className="home-contact-form-card__header-accent" aria-hidden />
               <div className="mb-7 pb-6 border-b border-emerald-100/80 relative">
                 <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-emerald-950 tracking-tight mb-2">
@@ -552,6 +608,7 @@ export const Home: React.FC = () => {
                   </button>
                 </form>
               )}
+            </div>
             </div>
           </div>
         </div>

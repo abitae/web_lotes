@@ -29,22 +29,24 @@ export const Footer: React.FC = () => {
   const activeChannels = channels.filter((c) => c.isActive && c.channelType !== "whatsapp");
 
   return (
-    <footer id="public-footer" className="bg-[#09090b] text-[#a1a1aa] border-t border-[#27272a] select-none font-sans">
-      <div className="bg-[#18181b] border-b border-[#27272a] py-2 text-[#fafafa]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-medium tracking-wide">
-          {(settings.footerLegalText?.trim()) && (
-          <span className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />
-            {settings.footerLegalText}
-          </span>
-          )}
-          {(settings.footerRuc?.trim()) && (
-          <span className="text-[#a1a1aa] text-[10px] font-mono">
-            {settings.footerRuc}
-          </span>
-          )}
+    <footer id="public-footer" className="select-none font-sans">
+      {(settings.footerLegalText?.trim() || settings.footerRuc?.trim()) && (
+        <div className="footer-legal-bar">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-medium tracking-wide">
+            {(settings.footerLegalText?.trim()) && (
+              <span className="footer-legal-text flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                {settings.footerLegalText}
+              </span>
+            )}
+            {(settings.footerRuc?.trim()) && (
+              <span className="footer-ruc font-mono text-[10px]">
+                {settings.footerRuc}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -53,38 +55,58 @@ export const Footer: React.FC = () => {
               <BrandLogo settings={settings} variant="footer" />
             </Link>
             {(settings.footerDescription?.trim()) && (
-            <p className="text-xs text-stone-400 leading-relaxed font-light">
-              {settings.footerDescription}
-            </p>
+              <p className="footer-desc text-xs leading-relaxed font-light">
+                {settings.footerDescription}
+              </p>
             )}
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-sans font-bold text-sm text-stone-200 uppercase tracking-widest">
+            <h3 className="footer-heading font-sans font-bold text-sm uppercase tracking-widest">
               Explorar
             </h3>
             <ul className="space-y-2.5 text-xs">
-              <li><Link to="/" className="hover:text-stone-100 transition-colors">Inicio Portal</Link></li>
-              <li><Link to="/catalog" className="hover:text-stone-100 transition-colors">Buscar Terrenos</Link></li>
-              <li><Link to="/about" className="hover:text-stone-100 transition-colors">Quiénes Somos</Link></li>
-              <li><Link to="/contact" className="hover:text-stone-100 transition-colors">Trabaja con un Experto</Link></li>
+              <li><Link to="/" className="footer-link">Inicio Portal</Link></li>
+              <li><Link to="/catalog" className="footer-link">Buscar Terrenos</Link></li>
+              <li><Link to="/about" className="footer-link">Quiénes Somos</Link></li>
+              <li><Link to="/contact" className="footer-link">Trabaja con un Experto</Link></li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-sans font-bold text-sm text-stone-200 uppercase tracking-widest">
+            <h3 className="footer-heading font-sans font-bold text-sm uppercase tracking-widest">
               Lotes por Tipo
             </h3>
             <ul className="space-y-2.5 text-xs">
-              <li><Link to="/catalog?type=Playero" className="hover:text-[#fafafa] transition-colors flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />Proyectos Playeros</Link></li>
-              <li><Link to="/catalog?type=Campestre" className="hover:text-[#fafafa] transition-colors flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />Proyectos Campestres</Link></li>
-              <li><Link to="/catalog?type=Urbano" className="hover:text-[#fafafa] transition-colors flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />Habilitación Urbana</Link></li>
-              <li><Link to="/catalog?type=Industrial" className="hover:text-[#fafafa] transition-colors flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#a1a1aa]" />Zonas Industriales</Link></li>
+              <li>
+                <Link to="/catalog?type=Playero" className="footer-link flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
+                  Proyectos Playeros
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?type=Campestre" className="footer-link flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] shrink-0" />
+                  Proyectos Campestres
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?type=Urbano" className="footer-link flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
+                  Habilitación Urbana
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?type=Industrial" className="footer-link flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#a1a1aa] shrink-0" />
+                  Zonas Industriales
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div className="space-y-4 text-xs">
-            <h3 className="font-sans font-bold text-sm text-stone-200 uppercase tracking-widest">
+            <h3 className="footer-heading font-sans font-bold text-sm uppercase tracking-widest">
               Oficina Principal
             </h3>
             <ul className="space-y-3">
@@ -94,14 +116,14 @@ export const Footer: React.FC = () => {
                   const href = channelHref(ch);
                   return (
                     <li key={ch.id} className="flex items-start gap-2.5">
-                      <Icon className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                      <Icon className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                       {href ? (
-                        <a href={href} className="hover:text-stone-100">
+                        <a href={href} className="footer-link">
                           {ch.value}
                           {ch.extraInfo ? ` (${ch.extraInfo})` : ""}
                         </a>
                       ) : (
-                        <span>{ch.value}</span>
+                        <span className="footer-link">{ch.value}</span>
                       )}
                     </li>
                   );
@@ -109,16 +131,16 @@ export const Footer: React.FC = () => {
               ) : (
                 <>
                   <li className="flex items-start gap-2.5">
-                    <MapPin className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span>Av. Javier Prado Este 488, San Isidro, Lima, Perú</span>
+                    <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <span className="footer-link">Av. Javier Prado Este 488, San Isidro, Lima, Perú</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Phone className="w-4 h-4 text-amber-500 shrink-0" />
-                    <a href="tel:+5116805120" className="hover:text-stone-100">(01) 680-5120</a>
+                    <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+                    <a href="tel:+5116805120" className="footer-link">(01) 680-5120</a>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Mail className="w-4 h-4 text-amber-500 shrink-0" />
-                    <a href="mailto:informes@lotesenremate.pe" className="hover:text-stone-100">informes@lotesenremate.pe</a>
+                    <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+                    <a href="mailto:informes@lotesenremate.pe" className="footer-link">informes@lotesenremate.pe</a>
                   </li>
                 </>
               )}
@@ -126,8 +148,8 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-stone-900 flex flex-col md:flex-row justify-between items-center gap-4 text-2xs md:text-xs">
-          <div className="text-stone-500 text-center md:text-left">
+        <div className="footer-bottom mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+          <div className="footer-copyright text-center md:text-left">
             © {new Date().getFullYear()} {settings.siteName?.trim() || settings.browserTitle || "Lotes en Remate"}. Todos los derechos reservados.
           </div>
         </div>
