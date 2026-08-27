@@ -1,12 +1,15 @@
 CREATE TABLE IF NOT EXISTS banners (
-  id          VARCHAR(36) PRIMARY KEY,
-  title       VARCHAR(255) NOT NULL,
-  subtitle    TEXT NOT NULL,
-  button_text VARCHAR(100) NOT NULL,
-  image_url   TEXT NOT NULL,
-  badge_text  VARCHAR(100) NULL,
-  is_active   TINYINT(1) NOT NULL DEFAULT 1,
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id                  VARCHAR(36) PRIMARY KEY,
+  title               VARCHAR(255) NOT NULL,
+  subtitle            TEXT NOT NULL,
+  button_text         VARCHAR(100) NOT NULL,
+  image_url           TEXT NOT NULL,
+  frame_image_url     TEXT NULL,
+  overlay_image_url   TEXT NULL,
+  overlay_badge_text  VARCHAR(100) NULL,
+  badge_text          VARCHAR(100) NULL,
+  is_active           TINYINT(1) NOT NULL DEFAULT 1,
+  created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS testimonials (
@@ -44,11 +47,13 @@ CREATE TABLE IF NOT EXISTS site_settings (
   id                 SMALLINT PRIMARY KEY,
   logo_url           TEXT NULL,
   favicon_url        TEXT NULL,
-  site_name          VARCHAR(255) NOT NULL,
-  site_tagline       VARCHAR(255) NOT NULL,
+  site_name          VARCHAR(255) NULL,
+  site_tagline       VARCHAR(255) NULL,
   browser_title      VARCHAR(255) NOT NULL,
-  footer_tagline     VARCHAR(255) NOT NULL,
+  footer_tagline     VARCHAR(255) NULL,
   footer_description TEXT NOT NULL,
+  footer_legal_text  TEXT NULL,
+  footer_ruc         VARCHAR(255) NULL,
   updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -84,7 +89,41 @@ CREATE TABLE IF NOT EXISTS contact_forms (
   section_heading          VARCHAR(255) NULL,
   section_description      TEXT NULL,
   bullets                  JSON NULL,
+  page_eyebrow             VARCHAR(255) NULL,
+  page_heading             VARCHAR(255) NULL,
+  page_description         TEXT NULL,
   updated_at               TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS home_page (
+  id                           SMALLINT PRIMARY KEY,
+  stat1_value                  VARCHAR(100) NOT NULL DEFAULT '98%',
+  stat1_label                  VARCHAR(255) NOT NULL DEFAULT 'Clientes Satisfechos',
+  stat2_value                  VARCHAR(100) NOT NULL DEFAULT 'S/. 50M+',
+  stat2_label                  VARCHAR(255) NOT NULL DEFAULT 'Capitalizado en Lotes',
+  stat3_value                  VARCHAR(100) NOT NULL DEFAULT '1,200+',
+  stat3_label                  VARCHAR(255) NOT NULL DEFAULT 'Lotes Adjudicados',
+  stat4_value                  VARCHAR(100) NOT NULL DEFAULT '30 hrs',
+  stat4_label                  VARCHAR(255) NOT NULL DEFAULT 'Visitas Guiadas Semanales',
+  catalog_eyebrow              VARCHAR(255) NOT NULL DEFAULT 'Catálogo',
+  catalog_heading              VARCHAR(255) NOT NULL DEFAULT 'Conoce nuestros Proyectos',
+  catalog_description          TEXT NOT NULL,
+  catalog_cta_text             VARCHAR(255) NOT NULL DEFAULT 'Ver catálogo completo',
+  testimonials_eyebrow         VARCHAR(255) NOT NULL DEFAULT 'Historias de Éxito',
+  testimonials_heading         VARCHAR(255) NOT NULL DEFAULT 'Ellos ya confiaron en Lotesenremate.pe',
+  testimonials_description     TEXT NOT NULL,
+  contact_background_image_url TEXT NULL,
+  hero_secondary_cta_text      VARCHAR(255) NOT NULL DEFAULT 'Solicitar Asesoría',
+  hero_secondary_cta_link      VARCHAR(512) NOT NULL DEFAULT '/contact',
+  updated_at                   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS catalog_page (
+  id          SMALLINT PRIMARY KEY,
+  eyebrow     VARCHAR(255) NOT NULL DEFAULT 'Catálogo de proyectos',
+  heading     VARCHAR(255) NOT NULL DEFAULT 'Encuentra tu Próxima Inversión',
+  description TEXT NOT NULL,
+  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS corporate_channels (

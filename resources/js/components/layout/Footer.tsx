@@ -32,13 +32,17 @@ export const Footer: React.FC = () => {
     <footer id="public-footer" className="bg-[#09090b] text-[#a1a1aa] border-t border-[#27272a] select-none font-sans">
       <div className="bg-[#18181b] border-b border-[#27272a] py-2 text-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs font-medium tracking-wide">
+          {(settings.footerLegalText?.trim()) && (
           <span className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />
-            Todos nuestros lotes constan con Título de Propiedad inscrito en SUNARP.
+            {settings.footerLegalText}
           </span>
+          )}
+          {(settings.footerRuc?.trim()) && (
           <span className="text-[#a1a1aa] text-[10px] font-mono">
-            R.U.C. N° 20608541291 | REMATE DIRECTO
+            {settings.footerRuc}
           </span>
+          )}
         </div>
       </div>
 

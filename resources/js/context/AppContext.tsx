@@ -22,6 +22,8 @@ import {
   AboutValue,
   ExpertAdvisor,
   HomeAlertModal,
+  HomePageContent,
+  CatalogPageContent,
 } from "../types";
 import { api } from "../api";
 import { getAuthToken, setAuthToken, setAdminEmail, getAdminEmail } from "../api/client";
@@ -32,6 +34,8 @@ import {
   DEFAULT_CONTACT_FORMS,
   DEFAULT_ABOUT,
   DEFAULT_HOME_ALERT,
+  DEFAULT_HOME_PAGE,
+  DEFAULT_CATALOG_PAGE,
 } from "../config/siteDefaults";
 
 const EMPTY_STATS: DashboardStats = {
@@ -56,6 +60,8 @@ interface AppContextType {
   faqs: FaqItem[];
   about: AboutData | null;
   homeAlert: HomeAlertModal | null;
+  homePage: HomePageContent | null;
+  catalogPage: CatalogPageContent | null;
   loading: boolean;
   adminLoading: boolean;
   error: string | null;
@@ -93,6 +99,8 @@ interface AppContextType {
   updateExpertAdvisor: (id: string, data: Partial<ExpertAdvisor>) => Promise<void>;
   deleteExpertAdvisor: (id: string) => Promise<void>;
   updateHomeAlert: (data: Partial<HomeAlertModal>) => Promise<void>;
+  updateHomePage: (data: Partial<HomePageContent>) => Promise<void>;
+  updateCatalogPage: (data: Partial<CatalogPageContent>) => Promise<void>;
   getStats: () => DashboardStats;
   theme: "light" | "dark";
   toggleTheme: () => void;
@@ -118,6 +126,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [about, setAbout] = useState<AboutData | null>(null);
   const [homeAlert, setHomeAlert] = useState<HomeAlertModal | null>(null);
+  const [homePage, setHomePage] = useState<HomePageContent | null>(null);
+  const [catalogPage, setCatalogPage] = useState<CatalogPageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [adminLoading, setAdminLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -168,6 +178,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       api.getFaqs(),
       api.getAbout(),
       api.getHomeAlert(),
+      api.getHomePage(),
+      api.getCatalogPage(),
     ]);
 
     if (results[0].status === "fulfilled") setBanners(results[0].value);
@@ -179,6 +191,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (results[6].status === "fulfilled") setFaqs(results[6].value);
     if (results[7].status === "fulfilled") setAbout(results[7].value);
     if (results[8].status === "fulfilled") setHomeAlert(results[8].value);
+    if (results[9].status === "fulfilled") setHomePage(results[9].value);
+    if (results[10].status === "fulfilled") setCatalogPage(results[10].value);
   }, []);
 
   const loadAdminData = useCallback(async () => {
@@ -446,6 +460,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setHomeAlert(updated);
   };
 
+  const updateHomePage = async (data: Partial<HomePageContent>) => {
+    const updated = await api.updateHomePage(data);
+    setHomePage(updated);
+  };
+
+  const updateCatalogPage = async (data: Partial<CatalogPageContent>) => {
+    const updated = await api.updateCatalogPage(data);
+    setCatalogPage(updated);
+  };
+
   const getStats = () => stats;
 
   return (
@@ -463,6 +487,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         faqs,
         about,
         homeAlert,
+        homePage,
+        catalogPage,
         loading,
         adminLoading,
         error,
@@ -500,6 +526,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateExpertAdvisor,
         deleteExpertAdvisor,
         updateHomeAlert,
+        updateHomePage,
+        updateCatalogPage,
         getStats,
         theme,
         toggleTheme,

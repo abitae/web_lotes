@@ -23,5 +23,7 @@ class SiteSetting extends Model
         'browser_title',
         'footer_tagline',
         'footer_description',
+        'footer_legal_text',
+        'footer_ruc',
     ];
 }

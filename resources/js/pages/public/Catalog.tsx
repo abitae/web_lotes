@@ -7,6 +7,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
 import { ProjectCard } from "../../components/ProjectCard";
+import { DEFAULT_CATALOG_PAGE } from "../../config/siteDefaults";
 import {
   getUniqueProjectTypesFromProjects,
   getUniqueRegionsFromProjects,
@@ -22,7 +23,8 @@ import {
 } from "lucide-react";
 
 export const Catalog: React.FC = () => {
-  const { projects } = useApp();
+  const { projects, catalogPage } = useApp();
+  const page = catalogPage ?? DEFAULT_CATALOG_PAGE;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -127,13 +129,13 @@ export const Catalog: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <section className="mb-8 space-y-2">
           <span className="font-mono text-2xs text-amber-700 tracking-wider uppercase font-semibold">
-            Catálogo de proyectos
+            {page.eyebrow}
           </span>
           <h1 className="text-3xl font-sans font-extrabold text-emerald-950 tracking-tight">
-            Encuentra tu Próxima Inversión
+            {page.heading}
           </h1>
           <p className="text-stone-500 text-xs md:text-sm font-light">
-            Filtra por zona y región, compara precios y accede al detalle de cada proyecto con título SUNARP.
+            {page.description}
           </p>
         </section>
 

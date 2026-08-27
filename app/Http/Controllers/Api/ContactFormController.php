@@ -38,6 +38,9 @@ class ContactFormController extends Controller
             'sectionEyebrow' => 'section_eyebrow',
             'sectionHeading' => 'section_heading',
             'sectionDescription' => 'section_description',
+            'pageEyebrow' => 'page_eyebrow',
+            'pageHeading' => 'page_heading',
+            'pageDescription' => 'page_description',
         ]);
 
         if (array_key_exists('bullets', $body)) {

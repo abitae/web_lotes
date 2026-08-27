@@ -28,6 +28,9 @@ class ContactFormResource extends JsonResource
             'sectionHeading' => $this->section_heading,
             'sectionDescription' => $this->section_description,
             'bullets' => $bullets,
+            'pageEyebrow' => $this->page_eyebrow,
+            'pageHeading' => $this->page_heading,
+            'pageDescription' => $this->page_description,
         ];
     }
 }

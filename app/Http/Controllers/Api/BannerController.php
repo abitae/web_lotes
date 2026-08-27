@@ -36,7 +36,10 @@ class BannerController extends Controller
             'subtitle' => $body['subtitle'],
             'button_text' => $body['buttonText'],
             'image_url' => $body['imageUrl'],
-            'badge_text' => $body['badgeText'] ?? null,
+            'frame_image_url' => $this->nullableString($body['frameImageUrl'] ?? null),
+            'overlay_image_url' => $this->nullableString($body['overlayImageUrl'] ?? null),
+            'overlay_badge_text' => $this->nullableString($body['overlayBadgeText'] ?? null),
+            'badge_text' => $this->nullableString($body['badgeText'] ?? null),
             'is_active' => ($body['isActive'] ?? true) !== false,
         ]);
 
@@ -55,12 +58,21 @@ class BannerController extends Controller
             'subtitle' => 'subtitle',
             'buttonText' => 'button_text',
             'imageUrl' => 'image_url',
+            'frameImageUrl' => 'frame_image_url',
+            'overlayImageUrl' => 'overlay_image_url',
+            'overlayBadgeText' => 'overlay_badge_text',
             'badgeText' => 'badge_text',
             'isActive' => 'is_active',
         ], ['isActive']);
 
         if ($data === []) {
             throw new AppException(400, 'No hay campos para actualizar');
+        }
+
+        foreach (['frame_image_url', 'overlay_image_url', 'overlay_badge_text', 'badge_text'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $data[$field] = $this->nullableString($data[$field]);
+            }
         }
 
         $banner->update($data);
@@ -76,5 +88,18 @@ class BannerController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        if (! is_string($value)) {
+            return null;
+        }
+        $trimmed = trim($value);
+
+        return $trimmed === '' ? null : $trimmed;
     }
 }

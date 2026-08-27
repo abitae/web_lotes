@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { AboutData, ContactFormConfig, GuaranteesData, HomeAlertModal, SiteSettings } from "../types";
+import type {
+  AboutData,
+  CatalogPageContent,
+  ContactFormConfig,
+  GuaranteesData,
+  HomeAlertModal,
+  HomePageContent,
+  SiteSettings,
+} from "../types";
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logoUrl: null,
@@ -14,6 +22,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   footerTagline: "Somos parte de tus sueños",
   footerDescription:
     "La plataforma líder en el Perú para la adquisición, inversión y adjudicación de terrenos con alta plusvalía y total seguridad jurídica.",
+  footerLegalText: "Todos nuestros lotes constan con Título de Propiedad inscrito en SUNARP.",
+  footerRuc: "R.U.C. N° 20608541291 | REMATE DIRECTO",
 };
 
 export const DEFAULT_GUARANTEES: GuaranteesData = {
@@ -76,8 +86,43 @@ export const DEFAULT_CONTACT_FORMS: ContactFormConfig[] = [
       { text: "**Información Veraz**: Datos registrales directos y actualizados." },
       { text: "**Visitas organizadas los fines de semana**: Movilidad ejecutiva privada gratuita desde Lima ida y vuelta." },
     ],
+    pageEyebrow: "Canales de Atención 24/7",
+    pageHeading: "Contacta con Nuestros Expertos",
+    pageDescription:
+      "Solicita la programación gratuita de tu traslado ejecutivo privado de fin de semana para presenciar tu lote ideal.",
   },
 ];
+
+export const DEFAULT_HOME_PAGE: HomePageContent = {
+  stat1Value: "98%",
+  stat1Label: "Clientes Satisfechos",
+  stat2Value: "S/. 50M+",
+  stat2Label: "Capitalizado en Lotes",
+  stat3Value: "1,200+",
+  stat3Label: "Lotes Adjudicados",
+  stat4Value: "30 hrs",
+  stat4Label: "Visitas Guiadas Semanales",
+  catalogEyebrow: "Catálogo",
+  catalogHeading: "Conoce nuestros Proyectos",
+  catalogDescription:
+    "Terrenos con título SUNARP, ubicaciones estratégicas y opciones de financiamiento directo. Elige el proyecto que mejor se adapte a tu inversión.",
+  catalogCtaText: "Ver catálogo completo",
+  testimonialsEyebrow: "Historias de Éxito",
+  testimonialsHeading: "Ellos ya confiaron en Lotesenremate.pe",
+  testimonialsDescription:
+    "Inversionistas locales, profesionales independientes y familias peruanas expresan su recomendación sincera.",
+  contactBackgroundImageUrl:
+    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1920",
+  heroSecondaryCtaText: "Solicitar Asesoría",
+  heroSecondaryCtaLink: "/contact",
+};
+
+export const DEFAULT_CATALOG_PAGE: CatalogPageContent = {
+  eyebrow: "Catálogo de proyectos",
+  heading: "Encuentra tu Próxima Inversión",
+  description:
+    "Filtra por zona y región, compara precios y accede al detalle de cada proyecto con título SUNARP.",
+};
 
 export const DEFAULT_ABOUT: AboutData = {
   page: {

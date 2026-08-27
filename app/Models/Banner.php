@@ -20,6 +20,9 @@ class Banner extends Model
         'subtitle',
         'button_text',
         'image_url',
+        'frame_image_url',
+        'overlay_image_url',
+        'overlay_badge_text',
         'badge_text',
         'is_active',
     ];

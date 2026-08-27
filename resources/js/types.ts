@@ -39,6 +39,9 @@ export interface Banner {
   subtitle: string;
   buttonText: string;
   imageUrl: string;
+  frameImageUrl?: string | null;
+  overlayImageUrl?: string | null;
+  overlayBadgeText?: string | null;
   badgeText?: string;
   isActive: boolean;
 }
@@ -79,11 +82,13 @@ export type ChannelType = "address" | "phone" | "email" | "whatsapp";
 export interface SiteSettings {
   logoUrl: string | null;
   faviconUrl: string | null;
-  siteName: string;
-  siteTagline: string;
+  siteName: string | null;
+  siteTagline: string | null;
   browserTitle: string;
-  footerTagline: string;
+  footerTagline: string | null;
   footerDescription: string;
+  footerLegalText?: string | null;
+  footerRuc?: string | null;
 }
 
 export interface GuaranteeSection {
@@ -124,6 +129,9 @@ export interface ContactFormConfig {
   sectionHeading?: string | null;
   sectionDescription?: string | null;
   bullets?: ContactFormBullet[] | null;
+  pageEyebrow?: string | null;
+  pageHeading?: string | null;
+  pageDescription?: string | null;
 }
 
 export interface CorporateChannel {
@@ -195,4 +203,31 @@ export interface HomeAlertModal {
   buttonText: string | null;
   buttonLink: string | null;
   updatedAt: string;
+}
+
+export interface HomePageContent {
+  stat1Value: string;
+  stat1Label: string;
+  stat2Value: string;
+  stat2Label: string;
+  stat3Value: string;
+  stat3Label: string;
+  stat4Value: string;
+  stat4Label: string;
+  catalogEyebrow: string;
+  catalogHeading: string;
+  catalogDescription: string;
+  catalogCtaText: string;
+  testimonialsEyebrow: string;
+  testimonialsHeading: string;
+  testimonialsDescription: string;
+  contactBackgroundImageUrl: string | null;
+  heroSecondaryCtaText: string;
+  heroSecondaryCtaLink: string;
+}
+
+export interface CatalogPageContent {
+  eyebrow: string;
+  heading: string;
+  description: string;
 }

@@ -11,25 +11,34 @@ import { ImageUploadField } from "../../components/admin/ImageUploadField";
 import type { SiteSettings } from "../../types";
 import { Save, Eye } from "lucide-react";
 
+function emptyToNull(value: string): string | null {
+  const trimmed = value.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
 export const SiteIdentityTab: React.FC = () => {
   const { siteSettings, updateSiteSettings } = useApp();
   const s = siteSettings ?? DEFAULT_SITE_SETTINGS;
 
-  const [siteName, setSiteName] = useState(s.siteName);
-  const [siteTagline, setSiteTagline] = useState(s.siteTagline);
+  const [siteName, setSiteName] = useState(s.siteName ?? "");
+  const [siteTagline, setSiteTagline] = useState(s.siteTagline ?? "");
   const [browserTitle, setBrowserTitle] = useState(s.browserTitle);
-  const [footerTagline, setFooterTagline] = useState(s.footerTagline);
+  const [footerTagline, setFooterTagline] = useState(s.footerTagline ?? "");
   const [footerDescription, setFooterDescription] = useState(s.footerDescription);
+  const [footerLegalText, setFooterLegalText] = useState(s.footerLegalText ?? "");
+  const [footerRuc, setFooterRuc] = useState(s.footerRuc ?? "");
   const [logoUrl, setLogoUrl] = useState(s.logoUrl ?? "");
   const [faviconUrl, setFaviconUrl] = useState(s.faviconUrl ?? "");
   const [saving, setSaving] = useState(false);
 
   React.useEffect(() => {
-    setSiteName(s.siteName);
-    setSiteTagline(s.siteTagline);
+    setSiteName(s.siteName ?? "");
+    setSiteTagline(s.siteTagline ?? "");
     setBrowserTitle(s.browserTitle);
-    setFooterTagline(s.footerTagline);
+    setFooterTagline(s.footerTagline ?? "");
     setFooterDescription(s.footerDescription);
+    setFooterLegalText(s.footerLegalText ?? "");
+    setFooterRuc(s.footerRuc ?? "");
     setLogoUrl(s.logoUrl ?? "");
     setFaviconUrl(s.faviconUrl ?? "");
   }, [s]);
@@ -37,11 +46,13 @@ export const SiteIdentityTab: React.FC = () => {
   const previewSettings: SiteSettings = {
     logoUrl: logoUrl.trim() || null,
     faviconUrl: faviconUrl.trim() || null,
-    siteName: siteName.trim(),
-    siteTagline: siteTagline.trim(),
+    siteName: emptyToNull(siteName),
+    siteTagline: emptyToNull(siteTagline),
     browserTitle: browserTitle.trim() || DEFAULT_SITE_SETTINGS.browserTitle,
-    footerTagline: footerTagline.trim(),
+    footerTagline: emptyToNull(footerTagline),
     footerDescription: footerDescription.trim(),
+    footerLegalText: emptyToNull(footerLegalText),
+    footerRuc: emptyToNull(footerRuc),
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -49,11 +60,13 @@ export const SiteIdentityTab: React.FC = () => {
     setSaving(true);
     try {
       await updateSiteSettings({
-        siteName: siteName.trim(),
-        siteTagline: siteTagline.trim(),
+        siteName: emptyToNull(siteName),
+        siteTagline: emptyToNull(siteTagline),
         browserTitle: browserTitle.trim(),
-        footerTagline: footerTagline.trim(),
+        footerTagline: emptyToNull(footerTagline),
         footerDescription: footerDescription.trim(),
+        footerLegalText: emptyToNull(footerLegalText),
+        footerRuc: emptyToNull(footerRuc),
         logoUrl: logoUrl.trim() || null,
         faviconUrl: faviconUrl.trim() || null,
       });
@@ -71,7 +84,7 @@ export const SiteIdentityTab: React.FC = () => {
           Identidad del sitio
         </h2>
         <p className="text-[10px] text-[var(--text-s)] mt-1 font-mono">
-          Nombre y tagline del navbar son opcionales. Si están vacíos y hay logo, el logo ocupa todo el espacio de marca.
+          Nombre y tagline del navbar son opcionales. Si van vacíos y hay logo, el logo ocupa todo el espacio de marca.
         </p>
       </div>
 
@@ -152,6 +165,24 @@ export const SiteIdentityTab: React.FC = () => {
             onChange={(e) => setFooterDescription(e.target.value)}
             rows={3}
             className="w-full text-xs p-2.5 rounded border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text-p)] mt-1"
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="text-[10px] font-mono uppercase text-[var(--text-s)]">Barra legal footer (opcional)</label>
+          <input
+            value={footerLegalText}
+            onChange={(e) => setFooterLegalText(e.target.value)}
+            className="w-full text-xs p-2.5 rounded border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text-p)] mt-1"
+            placeholder="Ej. Todos nuestros lotes constan con Título de Propiedad inscrito en SUNARP."
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="text-[10px] font-mono uppercase text-[var(--text-s)]">RUC / texto legal corto (opcional)</label>
+          <input
+            value={footerRuc}
+            onChange={(e) => setFooterRuc(e.target.value)}
+            className="w-full text-xs p-2.5 rounded border border-[var(--border)] bg-[var(--card-bg)] text-[var(--text-p)] mt-1"
+            placeholder="Ej. R.U.C. N° 20608541291 | REMATE DIRECTO"
           />
         </div>
       </div>

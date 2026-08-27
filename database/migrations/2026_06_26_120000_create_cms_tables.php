@@ -11,6 +11,8 @@ return new class extends Migration
         'expert_advisors',
         'about_values',
         'about_page',
+        'catalog_page',
+        'home_page',
         'faqs',
         'corporate_channels',
         'contact_forms',

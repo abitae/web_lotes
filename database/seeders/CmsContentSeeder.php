@@ -4,12 +4,14 @@ namespace Database\Seeders;
 
 use App\Models\AboutPage;
 use App\Models\Banner;
+use App\Models\CatalogPage;
 use App\Models\ContactForm;
 use App\Models\CorporateChannel;
 use App\Models\Faq;
 use App\Models\GuaranteeItem;
 use App\Models\GuaranteeSection;
 use App\Models\HomeAlertModal;
+use App\Models\HomePage;
 use App\Models\Inquiry;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
@@ -28,6 +30,41 @@ class CmsContentSeeder extends Seeder
                 'browser_title' => 'Lotes en Remate | Inversión Segura en Terrenos',
                 'footer_tagline' => 'Inversión Segura',
                 'footer_description' => 'La plataforma líder en el Perú para la adquisición, inversión y adjudicación de terrenos.',
+                'footer_legal_text' => 'Todos nuestros lotes constan con Título de Propiedad inscrito en SUNARP.',
+                'footer_ruc' => 'R.U.C. N° 20608541291 | REMATE DIRECTO',
+            ]);
+        }
+
+        if (HomePage::query()->count() === 0) {
+            HomePage::query()->create([
+                'id' => 1,
+                'stat1_value' => '98%',
+                'stat1_label' => 'Clientes Satisfechos',
+                'stat2_value' => 'S/. 50M+',
+                'stat2_label' => 'Capitalizado en Lotes',
+                'stat3_value' => '1,200+',
+                'stat3_label' => 'Lotes Adjudicados',
+                'stat4_value' => '30 hrs',
+                'stat4_label' => 'Visitas Guiadas Semanales',
+                'catalog_eyebrow' => 'Catálogo',
+                'catalog_heading' => 'Conoce nuestros Proyectos',
+                'catalog_description' => 'Terrenos con título SUNARP, ubicaciones estratégicas y opciones de financiamiento directo.',
+                'catalog_cta_text' => 'Ver catálogo completo',
+                'testimonials_eyebrow' => 'Historias de Éxito',
+                'testimonials_heading' => 'Ellos ya confiaron en Lotesenremate.pe',
+                'testimonials_description' => 'Inversionistas locales, profesionales independientes y familias peruanas expresan su recomendación sincera.',
+                'contact_background_image_url' => 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1920',
+                'hero_secondary_cta_text' => 'Solicitar Asesoría',
+                'hero_secondary_cta_link' => '/contact',
+            ]);
+        }
+
+        if (CatalogPage::query()->count() === 0) {
+            CatalogPage::query()->create([
+                'id' => 1,
+                'eyebrow' => 'Catálogo de proyectos',
+                'heading' => 'Encuentra tu Próxima Inversión',
+                'description' => 'Filtra por zona y región, compara precios y accede al detalle de cada proyecto con título SUNARP.',
             ]);
         }
 
@@ -62,6 +99,9 @@ class CmsContentSeeder extends Seeder
                 'success_message' => 'Un especialista te contactará de inmediato.',
                 'default_message' => 'Hola, deseo ponerme en contacto con un asesor.',
                 'default_project_interest' => 'Contacto General',
+                'page_eyebrow' => 'Canales de Atención 24/7',
+                'page_heading' => 'Contacta con Nuestros Expertos',
+                'page_description' => 'Solicita la programación gratuita de tu traslado ejecutivo privado de fin de semana para presenciar tu lote ideal.',
             ]);
         }
 

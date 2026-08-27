@@ -29,6 +29,9 @@ class ContactForm extends Model
         'section_heading',
         'section_description',
         'bullets',
+        'page_eyebrow',
+        'page_heading',
+        'page_description',
     ];
 
     protected function casts(): array

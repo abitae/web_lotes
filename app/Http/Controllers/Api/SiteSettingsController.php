@@ -12,6 +12,16 @@ use Illuminate\Http\Request;
 
 class SiteSettingsController extends Controller
 {
+    private const NULLABLE_STRINGS = [
+        'site_name',
+        'site_tagline',
+        'footer_tagline',
+        'footer_legal_text',
+        'footer_ruc',
+        'logo_url',
+        'favicon_url',
+    ];
+
     public function show(): JsonResponse
     {
         $settings = SiteSetting::query()->find(1);
@@ -37,10 +47,18 @@ class SiteSettingsController extends Controller
             'browserTitle' => 'browser_title',
             'footerTagline' => 'footer_tagline',
             'footerDescription' => 'footer_description',
+            'footerLegalText' => 'footer_legal_text',
+            'footerRuc' => 'footer_ruc',
         ]);
 
         if ($data === []) {
             throw new AppException(400, 'No hay campos para actualizar');
+        }
+
+        foreach (self::NULLABLE_STRINGS as $field) {
+            if (array_key_exists($field, $data) && (is_string($data[$field]) && trim($data[$field]) === '')) {
+                $data[$field] = null;
+            }
         }
 
         $settings->update($data);

@@ -4,6 +4,7 @@ import type {
   AboutPageContent,
   AboutValue,
   Banner,
+  CatalogPageContent,
   ContactFormConfig,
   CorporateChannel,
   DashboardStats,
@@ -13,6 +14,7 @@ import type {
   GuaranteeSection,
   GuaranteesData,
   HomeAlertModal,
+  HomePageContent,
   Inquiry,
   Project,
   SiteSettings,
@@ -113,4 +115,12 @@ export const api = {
   getHomeAlert: () => apiRequest<HomeAlertModal>("/home-alert"),
   updateHomeAlert: (data: Partial<HomeAlertModal>) =>
     apiRequest<HomeAlertModal>("/home-alert", { method: "PUT", auth: true, body: JSON.stringify(data) }),
+
+  getHomePage: () => apiRequest<HomePageContent>("/home-page"),
+  updateHomePage: (data: Partial<HomePageContent>) =>
+    apiRequest<HomePageContent>("/home-page", { method: "PUT", auth: true, body: JSON.stringify(data) }),
+
+  getCatalogPage: () => apiRequest<CatalogPageContent>("/catalog-page"),
+  updateCatalogPage: (data: Partial<CatalogPageContent>) =>
+    apiRequest<CatalogPageContent>("/catalog-page", { method: "PUT", auth: true, body: JSON.stringify(data) }),
 };

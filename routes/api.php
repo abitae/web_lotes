@@ -3,12 +3,14 @@
 use App\Http\Controllers\Api\AboutController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\CatalogPageController;
 use App\Http\Controllers\Api\ChannelController;
 use App\Http\Controllers\Api\ContactFormController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\GuaranteeController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\HomeAlertController;
+use App\Http\Controllers\Api\HomePageController;
 use App\Http\Controllers\Api\InquiryController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\SiteSettingsController;
@@ -79,3 +81,9 @@ Route::delete('/about/advisors/{id}', [AboutController::class, 'destroyAdvisor']
 
 Route::get('/home-alert', [HomeAlertController::class, 'show']);
 Route::put('/home-alert', [HomeAlertController::class, 'update'])->middleware('auth:sanctum');
+
+Route::get('/home-page', [HomePageController::class, 'show']);
+Route::put('/home-page', [HomePageController::class, 'update'])->middleware('auth:sanctum');
+
+Route::get('/catalog-page', [CatalogPageController::class, 'show']);
+Route::put('/catalog-page', [CatalogPageController::class, 'update'])->middleware('auth:sanctum');

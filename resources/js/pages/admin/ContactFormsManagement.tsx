@@ -24,6 +24,9 @@ export const ContactFormsManagement: React.FC = () => {
   const [sectionEyebrow, setSectionEyebrow] = useState(form.sectionEyebrow ?? "");
   const [sectionHeading, setSectionHeading] = useState(form.sectionHeading ?? "");
   const [sectionDescription, setSectionDescription] = useState(form.sectionDescription ?? "");
+  const [pageEyebrow, setPageEyebrow] = useState(form.pageEyebrow ?? "");
+  const [pageHeading, setPageHeading] = useState(form.pageHeading ?? "");
+  const [pageDescription, setPageDescription] = useState(form.pageDescription ?? "");
   const [bulletsText, setBulletsText] = useState((form.bullets ?? []).map((b) => b.text).join("\n"));
 
   React.useEffect(() => {
@@ -38,6 +41,9 @@ export const ContactFormsManagement: React.FC = () => {
     setSectionEyebrow(f.sectionEyebrow ?? "");
     setSectionHeading(f.sectionHeading ?? "");
     setSectionDescription(f.sectionDescription ?? "");
+    setPageEyebrow(f.pageEyebrow ?? "");
+    setPageHeading(f.pageHeading ?? "");
+    setPageDescription(f.pageDescription ?? "");
     setBulletsText((f.bullets ?? []).map((b) => b.text).join("\n"));
   }, [contactForms]);
 
@@ -55,6 +61,9 @@ export const ContactFormsManagement: React.FC = () => {
         sectionEyebrow: sectionEyebrow || null,
         sectionHeading: sectionHeading || null,
         sectionDescription: sectionDescription || null,
+        pageEyebrow: pageEyebrow || null,
+        pageHeading: pageHeading || null,
+        pageDescription: pageDescription || null,
         bullets: bulletsText.split("\n").filter(Boolean).map((text) => ({ text })),
       });
     } catch {
@@ -72,6 +81,13 @@ export const ContactFormsManagement: React.FC = () => {
       </section>
 
       <form onSubmit={handleSave} className="admin-card border p-6 rounded-xl space-y-4 max-w-3xl">
+        <div className="space-y-3 pb-4 border-b border-[var(--border)]">
+          <p className="text-[10px] font-mono uppercase text-[var(--text-s)] font-bold">Cabecera — Página Contacto</p>
+          <input value={pageEyebrow} onChange={(e) => setPageEyebrow(e.target.value)} placeholder="Eyebrow (ej. Canales de Atención 24/7)" className="w-full text-xs p-2 rounded border border-[var(--border)] bg-[var(--bg)]" />
+          <input value={pageHeading} onChange={(e) => setPageHeading(e.target.value)} placeholder="Título H1" className="w-full text-xs p-2 rounded border border-[var(--border)] bg-[var(--bg)]" />
+          <textarea value={pageDescription} onChange={(e) => setPageDescription(e.target.value)} placeholder="Descripción de la página" rows={2} className="w-full text-xs p-2 rounded border border-[var(--border)] bg-[var(--bg)]" />
+        </div>
+
         <div className="space-y-3 pb-4 border-b border-[var(--border)]">
           <p className="text-[10px] font-mono uppercase text-[var(--text-s)] font-bold">Sección lateral — Inicio</p>
           <input value={sectionEyebrow} onChange={(e) => setSectionEyebrow(e.target.value)} placeholder="Etiqueta (ej. Comunícate hoy)" className="w-full text-xs p-2 rounded border border-[var(--border)] bg-[var(--bg)]" />

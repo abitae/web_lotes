@@ -18,6 +18,8 @@ class SiteSettingsResource extends JsonResource
             'browserTitle' => $this->browser_title,
             'footerTagline' => $this->footer_tagline,
             'footerDescription' => $this->footer_description,
+            'footerLegalText' => $this->footer_legal_text,
+            'footerRuc' => $this->footer_ruc,
         ];
     }
 }

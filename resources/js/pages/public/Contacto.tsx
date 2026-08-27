@@ -67,13 +67,14 @@ export const Contacto: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <section className="mb-12 space-y-2">
           <span className="font-mono text-2xs text-amber-700 tracking-wider uppercase font-semibold">
-            Canales de Atención 24/7
+            {contactForm.pageEyebrow ?? "Canales de Atención 24/7"}
           </span>
           <h1 className="text-3xl font-sans font-extrabold text-emerald-950 tracking-tight">
-            Contacta con Nuestros Expertos
+            {contactForm.pageHeading ?? "Contacta con Nuestros Expertos"}
           </h1>
           <p className="text-stone-500 text-xs md:text-sm font-light">
-            Solicita la programación gratuita de tu traslado ejecutivo privado de fin de semana para presenciar tu lote ideal.
+            {contactForm.pageDescription ??
+              "Solicita la programación gratuita de tu traslado ejecutivo privado de fin de semana para presenciar tu lote ideal."}
           </p>
         </section>
 

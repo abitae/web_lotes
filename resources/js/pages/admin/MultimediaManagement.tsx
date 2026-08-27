@@ -5,35 +5,36 @@
 
 import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
-import { Banner, Testimonial } from "../../types";
+import { Banner } from "../../types";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Sparkles,
-  Layers,
-  Image,
-  CheckCircle2,
   Trash2,
   Plus,
   Star,
   Check,
   X,
   Megaphone,
-  UserCheck
+  UserCheck,
+  Pencil,
 } from "lucide-react";
 import { ImageUploadField } from "../../components/admin/ImageUploadField";
 import { SiteIdentityTab } from "./SiteIdentityTab";
 import { GuaranteesTab } from "./GuaranteesTab";
+import { HomeContentTab } from "./HomeContentTab";
 
 export const MultimediaManagement: React.FC = () => {
   const { banners, testimonials, updateBanner, addBanner, deleteBanner, addTestimonial, deleteTestimonial } = useApp();
-  const [activeTab, setActiveTab] = useState<"banners" | "testimonials" | "identity" | "guarantees">("banners");
+  const [activeTab, setActiveTab] = useState<"banners" | "testimonials" | "identity" | "guarantees" | "home">("banners");
 
-  // Selected banner for editing toggles
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
+  const [editingBannerId, setEditingBannerId] = useState<string | null>(null);
   const [bannerTitle, setBannerTitle] = useState("");
   const [bannerSubtitle, setBannerSubtitle] = useState("");
   const [bannerButtonText, setBannerButtonText] = useState("Ver Proyectos");
   const [bannerUrl, setBannerUrl] = useState("");
+  const [bannerFrameUrl, setBannerFrameUrl] = useState("");
+  const [bannerOverlayUrl, setBannerOverlayUrl] = useState("");
+  const [bannerOverlayBadge, setBannerOverlayBadge] = useState("");
   const [bannerBadge, setBannerBadge] = useState("");
   const [bannerActive, setBannerActive] = useState(true);
 
@@ -66,29 +67,65 @@ export const MultimediaManagement: React.FC = () => {
     return () => clearInterval(interval);
   }, [activeBanners, currentBannerIndex]);
 
+  const resetBannerForm = () => {
+    setEditingBannerId(null);
+    setBannerTitle("");
+    setBannerSubtitle("");
+    setBannerButtonText("Ver Proyectos");
+    setBannerUrl("");
+    setBannerFrameUrl("");
+    setBannerOverlayUrl("");
+    setBannerOverlayBadge("");
+    setBannerBadge("");
+    setBannerActive(true);
+  };
+
+  const openCreateBanner = () => {
+    resetBannerForm();
+    setIsBannerModalOpen(true);
+  };
+
+  const openEditBanner = (banner: Banner) => {
+    setEditingBannerId(banner.id);
+    setBannerTitle(banner.title);
+    setBannerSubtitle(banner.subtitle);
+    setBannerButtonText(banner.buttonText);
+    setBannerUrl(banner.imageUrl);
+    setBannerFrameUrl(banner.frameImageUrl ?? "");
+    setBannerOverlayUrl(banner.overlayImageUrl ?? "");
+    setBannerOverlayBadge(banner.overlayBadgeText ?? "");
+    setBannerBadge(banner.badgeText ?? "");
+    setBannerActive(banner.isActive);
+    setIsBannerModalOpen(true);
+  };
+
   const handleCreateBannerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bannerTitle || !bannerUrl) return;
 
+    const payload = {
+      title: bannerTitle,
+      subtitle: bannerSubtitle,
+      buttonText: bannerButtonText,
+      imageUrl: bannerUrl,
+      frameImageUrl: bannerFrameUrl.trim() || null,
+      overlayImageUrl: bannerOverlayUrl.trim() || null,
+      overlayBadgeText: bannerOverlayBadge.trim() || null,
+      badgeText: bannerBadge || undefined,
+      isActive: bannerActive,
+    };
+
     try {
-      await addBanner({
-        title: bannerTitle,
-        subtitle: bannerSubtitle,
-        buttonText: bannerButtonText,
-        imageUrl: bannerUrl,
-        badgeText: bannerBadge || undefined,
-        isActive: bannerActive,
-      });
+      if (editingBannerId) {
+        await updateBanner(editingBannerId, payload);
+      } else {
+        await addBanner(payload);
+      }
 
       setIsBannerModalOpen(false);
-
-      setBannerTitle("");
-      setBannerSubtitle("");
-      setBannerButtonText("Ver Proyectos");
-      setBannerUrl("");
-      setBannerBadge("");
+      resetBannerForm();
     } catch {
-      alert("No se pudo crear el banner.");
+      alert(editingBannerId ? "No se pudo actualizar el banner." : "No se pudo crear el banner.");
     }
   };
 
@@ -133,7 +170,7 @@ export const MultimediaManagement: React.FC = () => {
             GESTIÓN MULTIMEDIA Y TESTIMONIOS
           </h1>
           <span className="font-mono text-[10px] text-[var(--text-s)] block mt-1 uppercase tracking-wide">
-            Portadas, testimonios, identidad del sitio y garantías de compra
+            Portadas, testimonios, identidad, inicio y garantías
           </span>
         </div>
       </section>
@@ -141,6 +178,7 @@ export const MultimediaManagement: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {([
           ["banners", "Portadas"],
+          ["home", "Inicio"],
           ["testimonials", "Testimonios"],
           ["identity", "Identidad"],
           ["guarantees", "Garantías"],
@@ -158,6 +196,7 @@ export const MultimediaManagement: React.FC = () => {
 
       {activeTab === "identity" && <SiteIdentityTab />}
       {activeTab === "guarantees" && <GuaranteesTab />}
+      {activeTab === "home" && <HomeContentTab />}
 
       {(activeTab === "banners" || activeTab === "testimonials") && (
       <div className="grid grid-cols-1 gap-8 max-w-4xl">
@@ -170,7 +209,7 @@ export const MultimediaManagement: React.FC = () => {
               BANNERS HERO (PORTADAS PRINCIPALES)
             </span>
             <button
-              onClick={() => setIsBannerModalOpen(true)}
+              onClick={openCreateBanner}
               className="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-400 text-stone-950 font-sans font-bold text-[10px] px-2.5 py-1.5 rounded uppercase cursor-pointer"
             >
               <Plus className="w-3 h-3 shrink-0" />
@@ -304,13 +343,18 @@ export const MultimediaManagement: React.FC = () => {
 
                   {/* Horizontal item styling */}
                   <div className="flex items-stretch gap-3.5 h-20">
-                    <div className="w-24 admin-card overflow-hidden rounded border border-[var(--border)] shrink-0">
+                    <div className="w-24 admin-card overflow-hidden rounded border border-[var(--border)] shrink-0 relative">
                       <img
                         src={b.imageUrl}
                         alt={b.title}
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
                       />
+                      {(b.frameImageUrl || b.overlayImageUrl) && (
+                        <span className="absolute bottom-0.5 right-0.5 bg-black/70 text-white text-[7px] font-mono px-1 rounded">
+                          3 imgs
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex-1 flex flex-col justify-between py-0.5 select-none leading-tight">
@@ -363,7 +407,16 @@ export const MultimediaManagement: React.FC = () => {
                       )}
                     </div>
 
-                    <button
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => openEditBanner(b)}
+                        className="p-1 text-[var(--text-s)] hover:text-amber-500 hover:bg-[var(--bg)] rounded transition-colors"
+                        title="Editar Banner"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
                       onClick={() => {
                         if (window.confirm("¿Seguro de remover este banner del slider de portada?")) {
                           deleteBanner(b.id).catch(() => alert("No se pudo eliminar el banner."));
@@ -374,6 +427,7 @@ export const MultimediaManagement: React.FC = () => {
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
+                    </div>
                   </div>
                 </article>
               );
@@ -460,12 +514,15 @@ export const MultimediaManagement: React.FC = () => {
       </div>
       )}
 
-      {/* MODAL 1: CREATE BANNER FORM */}
+      {/* MODAL 1: CREATE / EDIT BANNER FORM */}
       {isBannerModalOpen && (
         <section className="fixed inset-0 admin-overlay backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-xl w-full max-w-md p-6 relative space-y-5 text-[var(--text-p)] max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-xl w-full max-w-lg p-6 relative space-y-5 text-[var(--text-p)] max-h-[90vh] overflow-y-auto">
             <button
-              onClick={() => setIsBannerModalOpen(false)}
+              onClick={() => {
+                setIsBannerModalOpen(false);
+                resetBannerForm();
+              }}
               className="absolute top-4 right-4 p-1.5 hover:bg-[var(--bg)] rounded-lg text-[var(--text-s)] transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
@@ -476,7 +533,7 @@ export const MultimediaManagement: React.FC = () => {
                 Herramientas publicitarias
               </span>
               <h3 className="font-sans font-extrabold text-base">
-                Añadir Nueva Portada de Lotes
+                {editingBannerId ? "Editar Portada" : "Añadir Nueva Portada de Lotes"}
               </h3>
             </div>
 
@@ -535,12 +592,39 @@ export const MultimediaManagement: React.FC = () => {
               </div>
 
               <ImageUploadField
-                label="Imagen de fondo"
+                label="Imagen de fondo (panorámica)"
                 value={bannerUrl}
                 onChange={setBannerUrl}
                 required
-                previewAlt="Vista previa de la portada"
+                previewAlt="Vista previa fondo"
               />
+
+              <ImageUploadField
+                label="Recuadro principal"
+                value={bannerFrameUrl}
+                onChange={setBannerFrameUrl}
+                previewAlt="Vista previa recuadro"
+              />
+
+              <ImageUploadField
+                label="Recuadro extra (superpuesto)"
+                value={bannerOverlayUrl}
+                onChange={setBannerOverlayUrl}
+                previewAlt="Vista previa recuadro extra"
+              />
+
+              <div className="space-y-1">
+                <label className="block text-3xs font-mono font-bold uppercase tracking-wide text-[var(--text-s)]">
+                  Badge sobre recuadros (opcional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. ENTREGA INMEDIATA"
+                  value={bannerOverlayBadge}
+                  onChange={(e) => setBannerOverlayBadge(e.target.value)}
+                  className="w-full admin-card border focus:border-amber-400 p-2.5 rounded-lg outline-none text-[var(--text-p)]"
+                />
+              </div>
 
               <div className="flex items-center gap-2 pt-2.5">
                 <input
@@ -558,7 +642,10 @@ export const MultimediaManagement: React.FC = () => {
               <div className="pt-4 flex justify-end gap-2 text-xs font-sans font-bold border-t border-[var(--border)]">
                 <button
                   type="button"
-                  onClick={() => setIsBannerModalOpen(false)}
+                  onClick={() => {
+                    setIsBannerModalOpen(false);
+                    resetBannerForm();
+                  }}
                   className="px-4 py-2 text-[var(--text-s)] hover:text-[var(--text-p)] uppercase"
                 >
                   Cancelar
@@ -567,7 +654,7 @@ export const MultimediaManagement: React.FC = () => {
                   type="submit"
                   className="bg-amber-500 hover:bg-amber-400 text-stone-950 px-5 py-2 rounded-md uppercase tracking-wider"
                 >
-                  Inscribir Portada
+                  {editingBannerId ? "Guardar cambios" : "Inscribir Portada"}
                 </button>
               </div>
             </form>

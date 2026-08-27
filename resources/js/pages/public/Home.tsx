@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
-import { DEFAULT_GUARANTEES, getContactFormBySlug } from "../../config/siteDefaults";
+import { DEFAULT_GUARANTEES, DEFAULT_HOME_PAGE, getContactFormBySlug } from "../../config/siteDefaults";
 import { ProjectsCarousel } from "../../components/ProjectsCarousel";
 import { HomeAlertModal } from "../../components/HomeAlertModal";
 import { formatProjectInterestLabel } from "../../utils/projects";
@@ -23,8 +23,9 @@ import {
 } from "lucide-react";
 
 export const Home: React.FC = () => {
-  const { banners, projects, testimonials, addInquiry, guarantees, contactForms } = useApp();
+  const { banners, projects, testimonials, addInquiry, guarantees, contactForms, homePage } = useApp();
   const guaranteeData = guarantees ?? DEFAULT_GUARANTEES;
+  const homeContent = homePage ?? DEFAULT_HOME_PAGE;
   const contactForm = getContactFormBySlug(contactForms, "contact_consulta");
   const activeGuaranteeItems = guaranteeData.items.filter((i) => i.isActive);
 
@@ -92,8 +93,17 @@ export const Home: React.FC = () => {
     subtitle: "Lotes de campo, playa y urbanos inscritos en Registros Públicos con plusvalía garantizada.",
     buttonText: "Explorar catálogo",
     imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600",
+    frameImageUrl: null as string | null,
+    overlayImageUrl: null as string | null,
+    overlayBadgeText: null as string | null,
     badgeText: "Ventas 2026",
   };
+
+  const frameImage = activeBanner.frameImageUrl?.trim() || null;
+  const overlayImage = activeBanner.overlayImageUrl?.trim() || null;
+  const overlayBadge = activeBanner.overlayBadgeText?.trim() || null;
+  const secondaryCtaLink = homeContent.heroSecondaryCtaLink?.trim() || "/contact";
+  const contactBg = homeContent.contactBackgroundImageUrl?.trim() || null;
 
   return (
     <div id="home-page" className="-mt-14">
@@ -117,7 +127,7 @@ export const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Column: Content */}
-            <div className="hero-banner-content-panel lg:col-span-7 space-y-6 text-left rounded-2xl p-6 sm:p-8">
+            <div className={`hero-banner-content-panel ${(frameImage || overlayImage || overlayBadge) ? "lg:col-span-7" : "lg:col-span-12"} space-y-6 text-left rounded-2xl p-6 sm:p-8`}>
               {activeBanner.badgeText && (
                 <div className="hero-banner-badge inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono tracking-widest uppercase font-bold">
                   <Sparkles className="w-3.5 h-3.5 text-white shrink-0" aria-hidden />
@@ -142,45 +152,50 @@ export const Home: React.FC = () => {
                   {activeBanner.buttonText === "Explorar catálogo" ? "Explorar proyectos" : activeBanner.buttonText}
                 </Link>
                 <Link
-                  to="/contact"
+                  to={secondaryCtaLink}
                   className="inline-flex justify-center items-center gap-2 bg-[var(--card-bg)] hover:bg-[var(--border)] text-[var(--text-p)] border-2 border-[var(--border)] font-sans font-semibold text-sm px-7 py-3.5 rounded-lg transition-all shadow-md"
                 >
                   <PhoneCall className="w-4 h-4 text-[var(--accent)]" />
-                  Solicitar Asesoría
+                  {homeContent.heroSecondaryCtaText}
                 </Link>
               </div>
             </div>
 
             {/* Right Column: Layered Reduced-Width & Superposed Images */}
+            {(frameImage || overlayImage || overlayBadge) && (
             <div className="lg:col-span-5 relative flex justify-center items-center h-[350px] sm:h-[450px] lg:h-[480px]">
-              {/* Primary Background Image Container (Reduced width) */}
+              {frameImage && (
               <div className="w-[72%] h-[82%] rounded-2xl overflow-hidden shadow-2xl border border-[var(--border)] relative z-10 transition-all duration-300 hover:scale-101">
                 <img
-                  src={activeBanner.imageUrl}
+                  src={frameImage}
                   alt={activeBanner.title}
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
               </div>
+              )}
 
-              {/* Secondary Overlapping / Superposed Image on the Right */}
+              {overlayImage && (
               <div className="absolute right-0 bottom-4 sm:bottom-10 w-[45%] h-[55%] rounded-xl overflow-hidden shadow-2xl border-2 border-[var(--card-bg)] z-20 transform rotate-2 hover:rotate-0 transition-transform duration-300">
                 <img
-                  src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
+                  src={overlayImage}
                   alt="Vista del Lote"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
               </div>
+              )}
 
-              {/* Decorative dynamic badge */}
+              {overlayBadge && (
               <div className="absolute left-[-10px] bottom-12 bg-[var(--accent)] text-white px-3 py-1.5 rounded shadow-xl z-25 font-mono text-[10px] flex items-center gap-2">
                 <Sparkles className="w-3 h-3 text-white" />
-                <span className="font-extrabold tracking-wider">ENTREGA INMEDIATA</span>
+                <span className="font-extrabold tracking-wider">{overlayBadge}</span>
               </div>
+              )}
             </div>
+            )}
           </div>
         </div>
 
@@ -211,30 +226,19 @@ export const Home: React.FC = () => {
       {/* 2. STATS BAR */}
       <section className="bg-stone-100 border-y border-stone-200/60 py-8 relative -mt-6 z-10 max-w-6xl mx-auto rounded-xl premium-card-shadow px-4 sm:px-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="space-y-1">
-            <div className="text-3xl font-sans font-extrabold text-emerald-950">98%</div>
-            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest font-semibold">
-              Clientes Satisfechos
+          {([
+            [homeContent.stat1Value, homeContent.stat1Label],
+            [homeContent.stat2Value, homeContent.stat2Label],
+            [homeContent.stat3Value, homeContent.stat3Label],
+            [homeContent.stat4Value, homeContent.stat4Label],
+          ] as const).map(([value, label]) => (
+            <div key={label} className="space-y-1">
+              <div className="text-3xl font-sans font-extrabold text-emerald-950">{value}</div>
+              <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest font-semibold">
+                {label}
+              </div>
             </div>
-          </div>
-          <div className="space-y-1">
-            <div className="text-3xl font-sans font-extrabold text-emerald-950">S/. 50M+</div>
-            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest font-semibold">
-              Capitalizado en Lotes
-            </div>
-          </div>
-          <div className="space-y-1">
-            <div className="text-3xl font-sans font-extrabold text-emerald-950">1,200+</div>
-            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest font-semibold">
-              Lotes Adjudicados
-            </div>
-          </div>
-          <div className="space-y-1">
-            <div className="text-3xl font-sans font-extrabold text-emerald-950">30 hrs</div>
-            <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest font-semibold">
-              Visitas Guiadas Semanales
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -247,20 +251,20 @@ export const Home: React.FC = () => {
             <div className="space-y-3 max-w-2xl">
               <span className="inline-flex items-center gap-1.5 font-mono text-xs text-[var(--accent-text)] tracking-widest uppercase font-semibold">
                 <Compass className="w-3.5 h-3.5" />
-                Catálogo
+                {homeContent.catalogEyebrow}
               </span>
               <h2 className="text-3xl md:text-4xl font-sans font-extrabold text-[var(--text-p)] leading-tight tracking-tight">
-                Conoce nuestros Proyectos
+                {homeContent.catalogHeading}
               </h2>
               <p className="text-[var(--text-s)] text-sm leading-relaxed font-light">
-                Terrenos con título SUNARP, ubicaciones estratégicas y opciones de financiamiento directo. Elige el proyecto que mejor se adapte a tu inversión.
+                {homeContent.catalogDescription}
               </p>
             </div>
             <Link
               to="/catalog"
               className="group shrink-0 inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[#008c4a] text-white font-sans font-semibold text-xs px-5 py-3 rounded-lg transition-all shadow-md hover:-translate-y-0.5"
             >
-              Ver catálogo completo
+              {homeContent.catalogCtaText}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
@@ -339,13 +343,13 @@ export const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
           <span className="font-mono text-xs text-amber-700 tracking-widest uppercase font-semibold block">
-            Historias de Éxito
+            {homeContent.testimonialsEyebrow}
           </span>
           <h2 className="text-3xl font-sans font-extrabold text-emerald-950">
-            Ellos ya confiaron en Lotesenremate.pe
+            {homeContent.testimonialsHeading}
           </h2>
           <p className="text-stone-500 text-xs md:text-sm font-light">
-            Inversionistas locales, profesionales independientes y familias peruanas expresan su recomendación sincera.
+            {homeContent.testimonialsDescription}
           </p>
         </div>
 
@@ -397,14 +401,15 @@ export const Home: React.FC = () => {
       {/* 6. CONTEXT LEAD INQUIRY FORM */}
       <section className="home-contact-section py-20 md:py-28 relative overflow-hidden">
         <div className="home-contact-section__base" aria-hidden />
+        {contactBg && (
         <div
           className="home-contact-section__photo"
           aria-hidden
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1920')",
+            backgroundImage: `url('${contactBg}')`,
           }}
         />
+        )}
         <div className="home-contact-section__glow home-contact-section__glow--left" aria-hidden />
         <div className="home-contact-section__glow home-contact-section__glow--right" aria-hidden />
         <div className="home-contact-section__glow home-contact-section__glow--center" aria-hidden />

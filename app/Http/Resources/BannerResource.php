@@ -16,6 +16,9 @@ class BannerResource extends JsonResource
             'subtitle' => $this->subtitle,
             'buttonText' => $this->button_text,
             'imageUrl' => $this->image_url,
+            'frameImageUrl' => $this->frame_image_url,
+            'overlayImageUrl' => $this->overlay_image_url,
+            'overlayBadgeText' => $this->overlay_badge_text,
             'badgeText' => $this->badge_text,
             'isActive' => (bool) $this->is_active,
         ];
