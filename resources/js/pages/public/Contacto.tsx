@@ -9,6 +9,8 @@ import { getContactFormBySlug } from "../../config/siteDefaults";
 import { formatProjectInterestLabel } from "../../utils/projects";
 import type { CorporateChannel } from "../../types";
 import { Phone, Mail, MapPin, Send, HelpCircle, ChevronDown, CheckCircle2, MessageSquare } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { collapseHeight } from "../../utils/motion";
 
 function channelIcon(type: CorporateChannel["channelType"]) {
   if (type === "phone" || type === "whatsapp") return Phone;
@@ -87,8 +89,16 @@ export const Contacto: React.FC = () => {
               {contactForm.formSubtitle}
             </p>
 
+            <AnimatePresence mode="wait">
             {formSuccess ? (
-              <div className="bg-emerald-50 border border-emerald-250 text-emerald-900 rounded-xl p-8 space-y-4 text-center">
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.25 }}
+                className="bg-emerald-50 border border-emerald-250 text-emerald-900 rounded-xl p-8 space-y-4 text-center"
+              >
                 <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-850">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
@@ -96,9 +106,17 @@ export const Contacto: React.FC = () => {
                   <h3 className="font-sans font-extrabold text-sm uppercase">{contactForm.successTitle}</h3>
                   <p className="text-xs font-light max-w-sm mx-auto leading-relaxed">{contactForm.successMessage}</p>
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-5">
+              <motion.form
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onSubmit={handleFormSubmit}
+                className="space-y-5"
+              >
                 <div className="space-y-1">
                   <label className="block text-2xs font-mono font-bold tracking-wide uppercase text-stone-500">Nombres Completos</label>
                   <input type="text" required placeholder="Ej. Juan Pérez Ramos" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-stone-50 border border-stone-200 focus:border-emerald-800 focus:bg-white rounded-lg p-2.5 text-xs outline-none transition-colors" />
@@ -131,12 +149,18 @@ export const Contacto: React.FC = () => {
                   <label className="block text-2xs font-mono font-bold tracking-wide uppercase text-stone-500">Mensaje</label>
                   <textarea rows={4} placeholder="Escriba su consulta..." value={message} onChange={(e) => setMessage(e.target.value)} className="w-full bg-stone-50 border border-stone-200 focus:border-emerald-800 focus:bg-white rounded-lg p-2.5 text-xs outline-none transition-colors resize-none" />
                 </div>
-                <button type="submit" className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-sans font-extrabold text-xs py-3.5 px-6 rounded-lg transition-transform uppercase tracking-wider shadow-sm flex items-center justify-center gap-2">
+                <motion.button
+                  type="submit"
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-sans font-extrabold text-xs py-3.5 px-6 rounded-lg uppercase tracking-wider shadow-sm flex items-center justify-center gap-2"
+                >
                   <Send className="w-4 h-4" />
                   {contactForm.submitLabel}
-                </button>
-              </form>
+                </motion.button>
+              </motion.form>
             )}
+            </AnimatePresence>
           </main>
 
           <aside className="lg:col-span-5 space-y-8 flex flex-col justify-start">
@@ -193,11 +217,22 @@ export const Contacto: React.FC = () => {
                         <span className="pr-4">{faq.question}</span>
                         <ChevronDown className={`w-4 h-4 text-stone-500 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                       </button>
-                      {isOpen && (
-                        <div className="px-4 pb-4 font-sans font-light text-xs text-stone-500 leading-relaxed border-t border-stone-100/50 pt-3 bg-stone-50/30">
-                          {faq.answer}
-                        </div>
-                      )}
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            key="answer"
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                            variants={collapseHeight}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-4 pb-4 font-sans font-light text-xs text-stone-500 leading-relaxed border-t border-stone-100/50 pt-3 bg-stone-50/30">
+                              {faq.answer}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </article>
                   );
                 })}

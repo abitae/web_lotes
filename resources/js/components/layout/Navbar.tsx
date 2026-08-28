@@ -5,10 +5,12 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Compass, CircleHelp, Users, ShieldAlert, Sun, Moon } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { DEFAULT_SITE_SETTINGS } from "../../config/siteDefaults";
 import { BrandLogo } from "../BrandLogo";
+import { collapseHeight, EASE_OUT } from "../../utils/motion";
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,8 +39,11 @@ export const Navbar: React.FC = () => {
   }, [location]);
 
   return (
-    <nav
+    <motion.nav
       id="public-navbar"
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: EASE_OUT }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
         isScrolled
           ? "bg-[var(--card-bg)]/90 border-[var(--border)] shadow-md py-1.5"
@@ -152,15 +157,35 @@ export const Navbar: React.FC = () => {
               className="p-1.5 text-[var(--text-s)] hover:text-[var(--text-p)] focus:outline-none rounded hover:bg-[var(--card-bg)]"
               aria-label="Abrir menú"
             >
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={isOpen ? "close" : "open"}
+                  initial={{ opacity: 0, rotate: -45 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 45 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex"
+                >
+                  {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </motion.span>
+              </AnimatePresence>
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu Panel */}
+      <AnimatePresence>
       {isOpen && (
-        <div className="md:hidden bg-[var(--card-bg)] border-b border-[var(--border)] py-3 px-4 shadow-inner space-y-2">
+        <motion.div
+          key="mobile-menu"
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={collapseHeight}
+          className="md:hidden bg-[var(--card-bg)] border-b border-[var(--border)] shadow-inner overflow-hidden"
+        >
+        <div className="py-3 px-4 space-y-2">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -224,7 +249,9 @@ export const Navbar: React.FC = () => {
             </Link>
           </div>
         </div>
+        </motion.div>
       )}
-    </nav>
+      </AnimatePresence>
+    </motion.nav>
   );
 };

@@ -4,11 +4,13 @@
  */
 
 import React from "react";
+import { motion } from "motion/react";
 import { Landmark, Eye } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { DEFAULT_ABOUT } from "../../config/siteDefaults";
 import { GuaranteeIcon } from "../../utils/siteContent";
 import { ExpertAdvisorsCarousel } from "../../components/ExpertAdvisorsCarousel";
+import { fadeUp, staggerContainer, viewportOnce, EASE_OUT } from "../../utils/motion";
 
 export const Nosotros: React.FC = () => {
   const { about } = useApp();
@@ -31,7 +33,12 @@ export const Nosotros: React.FC = () => {
           <div className="absolute inset-0 hero-banner-scrim-vertical" />
         </div>
 
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE_OUT }}
+          className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center"
+        >
           <div className="hero-banner-content-panel rounded-2xl p-6 sm:p-10 space-y-4">
             <span className="font-mono text-2xs text-amber-700 tracking-widest uppercase font-semibold block">
               {p.heroEyebrow}
@@ -43,27 +50,33 @@ export const Nosotros: React.FC = () => {
               {p.heroDescription}
             </p>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="space-y-4 bg-white p-8 rounded-2xl border border-stone-200/60 premium-card-shadow text-left">
+        <motion.div
+          variants={staggerContainer(0.12)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center"
+        >
+          <motion.div variants={fadeUp} className="space-y-4 bg-white p-8 rounded-2xl border border-stone-200/60 premium-card-shadow text-left">
             <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-850">
               <Landmark className="w-6 h-6" />
             </div>
             <h2 className="text-xl font-sans font-extrabold text-emerald-950">{p.missionHeading}</h2>
             <p className="text-stone-500 text-xs leading-relaxed font-light font-sans">{p.missionDescription}</p>
-          </div>
+          </motion.div>
 
-          <div className="space-y-4 bg-white p-8 rounded-2xl border border-stone-200/60 premium-card-shadow text-left">
+          <motion.div variants={fadeUp} className="space-y-4 bg-white p-8 rounded-2xl border border-stone-200/60 premium-card-shadow text-left">
             <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-700">
               <Eye className="w-6 h-6" />
             </div>
             <h2 className="text-xl font-sans font-extrabold text-emerald-950">{p.visionHeading}</h2>
             <p className="text-stone-500 text-xs leading-relaxed font-light font-sans">{p.visionDescription}</p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       <section className="bg-stone-55 border-y border-stone-200/40 py-16 md:py-24">
@@ -76,17 +89,23 @@ export const Nosotros: React.FC = () => {
             <p className="text-stone-500 text-xs md:text-sm font-light">{p.valuesDescription}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+          <motion.div
+            variants={staggerContainer(0.1)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left"
+          >
             {values.map((item) => (
-              <div key={item.id} className="space-y-3">
+              <motion.div key={item.id} variants={fadeUp} className="space-y-3">
                 <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-850 uppercase">
                   <GuaranteeIcon name={item.icon} className="w-4 h-4 text-amber-500 shrink-0" />
                   {item.title}
                 </div>
                 <p className="text-stone-500 text-xs leading-relaxed font-light font-sans">{item.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 

@@ -5,12 +5,14 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
 import { useApp } from "../../context/AppContext";
 import { DEFAULT_GUARANTEES, DEFAULT_HOME_PAGE, getContactFormBySlug } from "../../config/siteDefaults";
 import { ProjectsCarousel } from "../../components/ProjectsCarousel";
 import { HomeAlertModal } from "../../components/HomeAlertModal";
 import { formatProjectInterestLabel } from "../../utils/projects";
 import { GuaranteeIcon, renderInlineBold } from "../../utils/siteContent";
+import { fadeUp, scaleIn, staggerContainer, viewportOnce, EASE_OUT } from "../../utils/motion";
 import {
   Compass,
   ArrowRight,
@@ -25,6 +27,10 @@ import {
   Mail,
   Phone,
   MapPin,
+  User,
+  Loader2,
+  AlertCircle,
+  MessageSquare,
 } from "lucide-react";
 
 export const Home: React.FC = () => {
@@ -48,6 +54,8 @@ export const Home: React.FC = () => {
   const [projectInterest, setProjectInterest] = useState("");
   const [message, setMessage] = useState("");
   const [formSuccess, setFormSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Auto rotate banners if multiple are active
   useEffect(() => {
@@ -70,6 +78,9 @@ export const Home: React.FC = () => {
     e.preventDefault();
     if (!fullName || !phone || !email) return;
 
+    setIsSubmitting(true);
+    setFormError(null);
+
     try {
       await addInquiry({
         fullName,
@@ -90,7 +101,9 @@ export const Home: React.FC = () => {
         setFormSuccess(false);
       }, 5000);
     } catch {
-      // El error global se muestra en PublicLayout si aplica
+      setFormError("No se pudo enviar tu consulta. Inténtalo nuevamente o escríbenos por WhatsApp.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -117,21 +130,38 @@ export const Home: React.FC = () => {
       {/* 1. HERO CAROUSEL */}
       <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center bg-[var(--bg)] border-b border-[var(--border)] overflow-hidden pt-28 pb-12 lg:pt-36 lg:pb-20">
         {/* Ambient Panoramic Background Banner Image */}
-        <div className="absolute inset-0 transition-all duration-1000 select-none">
-          <img
-            src={activeBanner.imageUrl}
-            alt=""
-            aria-hidden
-            className="hero-banner-bg-image w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 hero-banner-scrim" />
-          <div className="absolute inset-0 hero-banner-scrim-vertical" />
-        </div>
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={`bg-${currentBannerIndex}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1, ease: EASE_OUT }}
+            className="absolute inset-0 select-none"
+          >
+            <img
+              src={activeBanner.imageUrl}
+              alt=""
+              aria-hidden
+              className="hero-banner-bg-image w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 hero-banner-scrim" />
+            <div className="absolute inset-0 hero-banner-scrim-vertical" />
+          </motion.div>
+        </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent)]/8 via-transparent to-transparent pointer-events-none" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <AnimatePresence mode="wait">
+          <motion.div
+            key={currentBannerIndex}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.5, ease: EASE_OUT }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+          >
             {/* Left Column: Content */}
             <div className={`hero-banner-content-panel ${(frameImage || overlayImage || overlayBadge) ? "lg:col-span-7" : "lg:col-span-12"} space-y-6 text-left rounded-2xl p-6 sm:p-8`}>
               {activeBanner.badgeText && (
@@ -140,7 +170,7 @@ export const Home: React.FC = () => {
                   {activeBanner.badgeText}
                 </div>
               )}
-              
+
               <h1 className="hero-banner-title text-4xl sm:text-5xl lg:text-5xl font-sans font-extrabold leading-tight tracking-tight">
                 {activeBanner.title}
               </h1>
@@ -150,20 +180,24 @@ export const Home: React.FC = () => {
               </p>
 
               <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <Link
-                  to="/catalog"
-                  className="inline-flex justify-center items-center gap-2 bg-[var(--accent)] hover:bg-[#008c4a] text-white font-sans font-semibold text-sm px-7 py-3.5 rounded-lg transition-transform hover:-translate-y-0.5 shadow-lg active:scale-95"
-                >
-                  <Compass className="w-4 h-4 text-white animate-spin-slow" />
-                  {activeBanner.buttonText === "Explorar catálogo" ? "Explorar proyectos" : activeBanner.buttonText}
-                </Link>
-                <Link
-                  to={secondaryCtaLink}
-                  className="inline-flex justify-center items-center gap-2 bg-[var(--card-bg)] hover:bg-[var(--border)] text-[var(--text-p)] border-2 border-[var(--border)] font-sans font-semibold text-sm px-7 py-3.5 rounded-lg transition-all shadow-md"
-                >
-                  <PhoneCall className="w-4 h-4 text-[var(--accent)]" />
-                  {homeContent.heroSecondaryCtaText}
-                </Link>
+                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="inline-flex">
+                  <Link
+                    to="/catalog"
+                    className="inline-flex justify-center items-center gap-2 bg-[var(--accent)] hover:bg-[#008c4a] text-white font-sans font-semibold text-sm px-7 py-3.5 rounded-lg shadow-lg"
+                  >
+                    <Compass className="w-4 h-4 text-white animate-spin-slow" />
+                    {activeBanner.buttonText === "Explorar catálogo" ? "Explorar proyectos" : activeBanner.buttonText}
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="inline-flex">
+                  <Link
+                    to={secondaryCtaLink}
+                    className="inline-flex justify-center items-center gap-2 bg-[var(--card-bg)] hover:bg-[var(--border)] text-[var(--text-p)] border-2 border-[var(--border)] font-sans font-semibold text-sm px-7 py-3.5 rounded-lg shadow-md"
+                  >
+                    <PhoneCall className="w-4 h-4 text-[var(--accent)]" />
+                    {homeContent.heroSecondaryCtaText}
+                  </Link>
+                </motion.div>
               </div>
             </div>
 
@@ -202,7 +236,8 @@ export const Home: React.FC = () => {
               )}
             </div>
             )}
-          </div>
+          </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Carousel Slider Controls */}
@@ -231,30 +266,42 @@ export const Home: React.FC = () => {
 
       {/* 2. STATS BAR */}
       <section className="bg-stone-100 border-y border-stone-200/60 py-8 relative -mt-6 z-10 max-w-6xl mx-auto rounded-xl premium-card-shadow px-4 sm:px-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <motion.div
+          variants={staggerContainer(0.08)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
+        >
           {([
             [homeContent.stat1Value, homeContent.stat1Label],
             [homeContent.stat2Value, homeContent.stat2Label],
             [homeContent.stat3Value, homeContent.stat3Label],
             [homeContent.stat4Value, homeContent.stat4Label],
           ] as const).map(([value, label]) => (
-            <div key={label} className="space-y-1">
+            <motion.div key={label} variants={fadeUp} className="space-y-1">
               <div className="text-3xl font-sans font-extrabold text-emerald-950">{value}</div>
               <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest font-semibold">
                 {label}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 3. FEATURED PROJECTS */}
       <section className="relative border-y border-[var(--border)] bg-[var(--card-bg)] py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/[0.04] via-transparent to-amber-500/[0.03] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <motion.div
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative"
+        >
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12 md:mb-14">
-            <div className="space-y-3 max-w-2xl">
+            <motion.div variants={fadeUp} className="space-y-3 max-w-2xl">
               <span className="inline-flex items-center gap-1.5 font-mono text-xs text-[var(--accent-text)] tracking-widest uppercase font-semibold">
                 <Compass className="w-3.5 h-3.5" />
                 {homeContent.catalogEyebrow}
@@ -265,16 +312,18 @@ export const Home: React.FC = () => {
               <p className="text-[var(--text-s)] text-sm leading-relaxed font-light">
                 {homeContent.catalogDescription}
               </p>
-            </div>
-            <Link
-              to="/catalog"
-              className="group shrink-0 inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[#008c4a] text-white font-sans font-semibold text-xs px-5 py-3 rounded-lg transition-all shadow-md hover:-translate-y-0.5"
-            >
-              {homeContent.catalogCtaText}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <Link
+                to="/catalog"
+                className="group shrink-0 inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[#008c4a] text-white font-sans font-semibold text-xs px-5 py-3 rounded-lg transition-all shadow-md hover:-translate-y-0.5"
+              >
+                {homeContent.catalogCtaText}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {catalogCarouselProjects.length === 0 ? (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -312,7 +361,13 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto space-y-4 mb-14 md:mb-16">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
+            className="text-center max-w-2xl mx-auto space-y-4 mb-14 md:mb-16"
+          >
             <span className="inline-flex items-center gap-2 font-mono text-xs text-emerald-200 tracking-widest uppercase font-bold px-3 py-1 rounded-full bg-emerald-400/15 border border-emerald-300/30">
               {guaranteeData.section.eyebrow}
             </span>
@@ -322,13 +377,22 @@ export const Home: React.FC = () => {
             <p className="text-emerald-50/95 text-sm md:text-base font-normal leading-relaxed max-w-xl mx-auto">
               {guaranteeData.section.description}
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <motion.div
+            variants={staggerContainer(0.1)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
+          >
             {activeGuaranteeItems.map((item) => (
-              <div
+              <motion.div
                 key={item.id}
-                className="home-guarantees-card p-8 rounded-2xl space-y-4 transition-all duration-300 hover:-translate-y-1"
+                variants={fadeUp}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.3, ease: EASE_OUT }}
+                className="home-guarantees-card p-8 rounded-2xl space-y-4"
               >
                 <div className="home-guarantees-icon w-14 h-14 rounded-xl flex items-center justify-center">
                   <GuaranteeIcon name={item.icon} className="w-7 h-7" />
@@ -339,15 +403,21 @@ export const Home: React.FC = () => {
                 <p className="text-emerald-50/90 text-sm font-normal leading-relaxed">
                   {item.description}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* 5. TESTIMONIALS SLIDER SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="text-center max-w-2xl mx-auto space-y-3 mb-16"
+        >
           <span className="font-mono text-xs text-amber-700 tracking-widest uppercase font-semibold block">
             {homeContent.testimonialsEyebrow}
           </span>
@@ -357,12 +427,21 @@ export const Home: React.FC = () => {
           <p className="text-stone-500 text-xs md:text-sm font-light">
             {homeContent.testimonialsDescription}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
           {testimonials.map((test) => (
-            <div
+            <motion.div
               key={test.id}
+              variants={fadeUp}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.3, ease: EASE_OUT }}
               className="bg-white p-8 rounded-xl border border-stone-200 hover:border-emerald-650/40 transition-colors premium-card-shadow relative flex flex-col justify-between"
             >
               <div className="space-y-4">
@@ -399,9 +478,9 @@ export const Home: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 6. CONTEXT LEAD INQUIRY FORM */}
@@ -426,7 +505,13 @@ export const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
             {/* Informative column */}
-            <div className="lg:col-span-5 flex flex-col justify-center space-y-7 text-white">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOnce}
+              className="lg:col-span-5 flex flex-col justify-center space-y-7 text-white"
+            >
               {contactForm.sectionEyebrow && (
                 <span className="inline-flex self-start items-center gap-2 font-mono text-xs text-amber-200 tracking-wider font-bold uppercase px-3 py-1.5 rounded-full bg-amber-400/20 border border-amber-200/30">
                   <Sparkles className="w-3.5 h-3.5" aria-hidden />
@@ -494,11 +579,17 @@ export const Home: React.FC = () => {
                   </ul>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Form card column */}
             <div className="lg:col-span-7 flex items-center">
-            <div className="home-contact-form-card w-full p-7 sm:p-10 rounded-2xl text-stone-900 overflow-hidden">
+            <motion.div
+              variants={scaleIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOnce}
+              className="home-contact-form-card w-full p-7 sm:p-10 rounded-2xl text-stone-900 overflow-hidden"
+            >
               <div className="home-contact-form-card__header-accent" aria-hidden />
               <div className="mb-7 pb-6 border-b border-emerald-100/80 relative">
                 <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-emerald-950 tracking-tight mb-2">
@@ -509,8 +600,16 @@ export const Home: React.FC = () => {
                 </p>
               </div>
 
+              <AnimatePresence mode="wait">
               {formSuccess ? (
-                <div className="bg-emerald-50 border-2 border-emerald-200 text-emerald-900 rounded-xl p-8 text-center space-y-3">
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="bg-emerald-50 border-2 border-emerald-200 text-emerald-900 rounded-xl p-8 text-center space-y-3"
+                >
                   <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-700">
                     <UserCheck className="w-7 h-7" />
                   </div>
@@ -520,21 +619,32 @@ export const Home: React.FC = () => {
                   <p className="text-sm font-normal text-emerald-800/90 leading-relaxed">
                     {contactForm.successMessage}
                   </p>
-                </div>
+                </motion.div>
               ) : (
-                <form onSubmit={handleFormSubmit} className="space-y-5">
+                <motion.form
+                  key="form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onSubmit={handleFormSubmit}
+                  className="space-y-5"
+                >
                   <div className="space-y-1.5">
                     <label className="home-form-label block text-xs font-mono tracking-wide uppercase">
                       Nombres Completos
                     </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ej. Juan Pérez Ramos"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="home-form-input w-full rounded-xl p-3 text-sm"
-                    />
+                    <div className="relative">
+                      <User className="w-4 h-4 text-[var(--accent)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ej. Juan Pérez Ramos"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="home-form-input w-full rounded-xl p-3 pl-10 text-sm"
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -542,27 +652,33 @@ export const Home: React.FC = () => {
                       <label className="home-form-label block text-xs font-mono tracking-wide uppercase">
                         Teléfono / WhatsApp
                       </label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="987 654 321"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="home-form-input w-full rounded-xl p-3 text-sm"
-                      />
+                      <div className="relative">
+                        <PhoneCall className="w-4 h-4 text-[var(--accent)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="tel"
+                          required
+                          placeholder="987 654 321"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="home-form-input w-full rounded-xl p-3 pl-10 text-sm"
+                        />
+                      </div>
                     </div>
                     <div className="space-y-1.5">
                       <label className="home-form-label block text-xs font-mono tracking-wide uppercase">
                         Correo Electrónico
                       </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="tucorreo@outlook.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="home-form-input w-full rounded-xl p-3 text-sm"
-                      />
+                      <div className="relative">
+                        <Mail className="w-4 h-4 text-[var(--accent)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="email"
+                          required
+                          placeholder="tucorreo@outlook.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="home-form-input w-full rounded-xl p-3 pl-10 text-sm"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -591,24 +707,55 @@ export const Home: React.FC = () => {
                     <label className="home-form-label block text-xs font-mono tracking-wide uppercase">
                       Mensaje
                     </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Cuéntanos qué tipo de lote buscas o cuándo prefieres la visita..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className="home-form-input w-full rounded-xl p-3 text-sm resize-none min-h-[7rem]"
-                    />
+                    <div className="relative">
+                      <MessageSquare className="w-4 h-4 text-[var(--accent)] absolute left-3.5 top-3.5 pointer-events-none" />
+                      <textarea
+                        rows={4}
+                        placeholder="Cuéntanos qué tipo de lote buscas o cuándo prefieres la visita..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="home-form-input w-full rounded-xl p-3 pl-10 text-sm resize-none min-h-[7rem]"
+                      />
+                    </div>
                   </div>
 
-                  <button
+                  <AnimatePresence>
+                    {formError && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25, ease: EASE_OUT }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex items-start gap-2 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs px-3.5 py-3">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>{formError}</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <motion.button
                     type="submit"
-                    className="home-contact-submit w-full text-white font-sans font-extrabold text-sm py-4 px-6 rounded-xl transition-all uppercase tracking-wider mt-2"
+                    disabled={isSubmitting}
+                    whileHover={isSubmitting ? undefined : { y: -2 }}
+                    whileTap={isSubmitting ? undefined : { scale: 0.97 }}
+                    className="home-contact-submit w-full text-white font-sans font-extrabold text-sm py-4 px-6 rounded-xl uppercase tracking-wider mt-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {contactForm.submitLabel}
-                  </button>
-                </form>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      contactForm.submitLabel
+                    )}
+                  </motion.button>
+                </motion.form>
               )}
-            </div>
+              </AnimatePresence>
+            </motion.div>
             </div>
           </div>
         </div>

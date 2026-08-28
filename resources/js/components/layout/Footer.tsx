@@ -5,11 +5,13 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import { Phone, Mail, MapPin, CheckCircle2 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { DEFAULT_SITE_SETTINGS } from "../../config/siteDefaults";
 import { BrandLogo } from "../BrandLogo";
 import type { CorporateChannel } from "../../types";
+import { fadeUp, staggerContainer, viewportOnce } from "../../utils/motion";
 
 function channelIcon(type: CorporateChannel["channelType"]) {
   if (type === "phone" || type === "whatsapp") return Phone;
@@ -48,9 +50,15 @@ export const Footer: React.FC = () => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+      <motion.div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12"
+        variants={staggerContainer(0.1)}
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportOnce}
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-3">
+          <motion.div variants={fadeUp} className="space-y-3">
             <Link to="/" className="inline-flex group">
               <BrandLogo settings={settings} variant="footer" />
             </Link>
@@ -59,9 +67,9 @@ export const Footer: React.FC = () => {
                 {settings.footerDescription}
               </p>
             )}
-          </div>
+          </motion.div>
 
-          <div className="space-y-4">
+          <motion.div variants={fadeUp} className="space-y-4">
             <h3 className="footer-heading font-sans font-bold text-sm uppercase tracking-widest">
               Explorar
             </h3>
@@ -71,9 +79,9 @@ export const Footer: React.FC = () => {
               <li><Link to="/about" className="footer-link">Quiénes Somos</Link></li>
               <li><Link to="/contact" className="footer-link">Trabaja con un Experto</Link></li>
             </ul>
-          </div>
+          </motion.div>
 
-          <div className="space-y-4">
+          <motion.div variants={fadeUp} className="space-y-4">
             <h3 className="footer-heading font-sans font-bold text-sm uppercase tracking-widest">
               Lotes por Tipo
             </h3>
@@ -103,9 +111,9 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </motion.div>
 
-          <div className="space-y-4 text-xs">
+          <motion.div variants={fadeUp} className="space-y-4 text-xs">
             <h3 className="footer-heading font-sans font-bold text-sm uppercase tracking-widest">
               Oficina Principal
             </h3>
@@ -145,15 +153,18 @@ export const Footer: React.FC = () => {
                 </>
               )}
             </ul>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="footer-bottom mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+        <motion.div
+          variants={fadeUp}
+          className="footer-bottom mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs"
+        >
           <div className="footer-copyright text-center md:text-left">
             © {new Date().getFullYear()} {settings.siteName?.trim() || settings.browserTitle || "Lotes en Remate"}. Todos los derechos reservados.
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </footer>
   );
 };
